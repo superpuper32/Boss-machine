@@ -1,0 +1,5 @@
+node_modules
+# Ignore Mac DS_Store files
+.DS_Store
+public/js/bundle.js
+public/js/bundle.js.map
