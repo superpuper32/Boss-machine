@@ -5,27 +5,27 @@ module.exports = minionsRouter;
 const { getAllFromDatabase, getFromDatabaseById, addToDatabase,
   updateInstanceInDatabase, deleteFromDatabasebyId } = require('./db');
 
+minionsRouter.param('minionId', (req, res, next, id) => {
+  const minion = getFromDatabaseById('minions', id);
+  if (minion) {
+    req.minion = minion;
+    next();
+  } else {
+    res.status(404).send();
+  }
+});
+
 minionsRouter.get('/', (req, res, next) => {
   res.send(getAllFromDatabase('minions'));
 });
 
 minionsRouter.get('/:minionId', (req, res, next) => {
-  const minion = getFromDatabaseById('minions', req.params.minionId);
-  if (minion) {
-    res.send(minion);
-  } else {
-    res.status(404).send();
-  }
+  res.send(req.minion);
 });
 
 minionsRouter.put('/:minionId', (req, res, next) => {
-  const minion = getFromDatabaseById('minions', req.params.minionId);
-  if (minion) {
     let updatedMinion = updateInstanceInDatabase('minions', req.body);
     res.send(updatedMinion);
-  } else {
-    res.status(404).send();
-  }
 });
 
 minionsRouter.post('/', (req, res, next) => {
@@ -34,8 +34,6 @@ minionsRouter.post('/', (req, res, next) => {
 });
 
 minionsRouter.delete('/:minionId', (req, res, next) => {
-  const minion = getFromDatabaseById('minions', req.params.minionId);
-  if (minion) {
     let deleteMinion = deleteFromDatabasebyId('minions', req.params.minionId);
     if (deleteMinion) {
       res.status(204);
@@ -43,7 +41,4 @@ minionsRouter.delete('/:minionId', (req, res, next) => {
       res.status(500);
     }
     res.send();
-  } else {
-    res.status(404).send();
-  }
 });
